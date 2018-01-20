@@ -59,7 +59,7 @@ class GeoJsonGridCreater(object):
         y_range = int((max_ycor - min_ycor) * 100) + 1
         return min_xcor, min_ycor, x_range, y_range
 
-    def getNthPolygonEdgeCoordinates(self, num):
+    def get_nth_polygon_edge_coordinates(self, num):
         start = 0
         pattern = re.compile('\n\n\n')
 
@@ -76,8 +76,8 @@ class GeoJsonGridCreater(object):
         polygon_edge_coordinates = map(self.process_coordinates_pair, polygon_edge_coordinate_pairs)
         return polygon_edge_coordinates
 
-    def getNthPolygonGrid(self, num):
-        polygon_edge_coordinates = self.getNthPolygonEdgeCoordinates(num)
+    def get_nth_grid_polygon_grid(self, num):
+        polygon_edge_coordinates = self.get_nth_polygon_edge_coordinates(num)
         min_xcor, min_ycor, x_range, y_range = self.get_screen_info(polygon_edge_coordinates)
 
         grid = Screen.Screen(x_range + 2 * self.matrix_border_offset, y_range + 2 * self.matrix_border_offset)
@@ -100,9 +100,9 @@ class GeoJsonGridCreater(object):
         # draw.flood_fill(grid, 0, 0, 0, 2)
         return grid
 
-    def getNthPolygonGridCoordinates(self, num):
-        polygon_edge_coordinates = self.getNthPolygonEdgeCoordinates(num)
-        grid = self.getNthPolygonGrid(num)
+    def get_nth_polygon_grid_coordinates(self, num):
+        polygon_edge_coordinates = self.get_nth_polygon_edge_coordinates(num)
+        grid = self.get_nth_polygon_grid(num)
 
         grid_coordinates = []
         min_xcor, min_ycor, x_range, y_range = self.get_screen_info(polygon_edge_coordinates)
@@ -112,8 +112,8 @@ class GeoJsonGridCreater(object):
                     grid_coordinates.append(((x / 100.0) + min_xcor, (y / 100.0) + min_ycor))
         return grid_coordinates
 
-    def getDistrictGrid(self):
-        district_grid_coordinates = self.getDistrictGridCoordinates()
+    def get_district_grid(self):
+        district_grid_coordinates = self.get_district_grid_coordinates()
         min_xcor, min_ycor, x_range, y_range = self.get_screen_info(district_grid_coordinates)
 
         grid = Screen.Screen(x_range + 2 * self.matrix_border_offset, y_range + 2 * self.matrix_border_offset)
@@ -124,10 +124,10 @@ class GeoJsonGridCreater(object):
             grid.plot(xcor, ycor)
         return grid
 
-    def getDistrictGridCoordinates(self):
+    def get_district_grid_coordinates(self):
         district_grid_coordinates = []
         for i in xrange(self.total_polygons):
             self.print_if_debug('Processing polygon {}/{}'.format(i, self.total_polygons))
-            polygon_grid_coordinates = self.getNthPolygonGridCoordinates(i)
+            polygon_grid_coordinates = self.get_nth_polygon_grid_coordinates(i)
             district_grid_coordinates.extend(polygon_grid_coordinates)
         return district_grid_coordinates
