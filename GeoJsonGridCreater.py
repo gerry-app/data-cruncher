@@ -28,7 +28,7 @@ class GeoJsonGridCreater(object):
     def get_content(self, filename):
         with open(filename) as file_handler:
             file_content = file_handler.read()
-        return file_content
+        return file_content.strip()
 
     def get_total_polygons(self):
         pattern = re.compile('\n\n\n')
@@ -76,7 +76,7 @@ class GeoJsonGridCreater(object):
         polygon_edge_coordinates = map(self.process_coordinates_pair, polygon_edge_coordinate_pairs)
         return polygon_edge_coordinates
 
-    def get_nth_grid_polygon_grid(self, num):
+    def get_nth_polygon_grid(self, num):
         polygon_edge_coordinates = self.get_nth_polygon_edge_coordinates(num)
         min_xcor, min_ycor, x_range, y_range = self.get_screen_info(polygon_edge_coordinates)
 
@@ -84,11 +84,12 @@ class GeoJsonGridCreater(object):
         for index in xrange(len(polygon_edge_coordinates) - 1):
             coordinate_pair1, coordinate_pair2 = polygon_edge_coordinates[index:index+2]
             grid_x1 = int((coordinate_pair1[0] - min_xcor) * 100) + self.matrix_border_offset
-            grid_y1 = int((coordinate_pair1[1] - min_ycor) * 100) + self.matrix_border_offset
+            grid_y1 = y_range + self.matrix_border_offset - int((coordinate_pair1[1] - min_ycor) * 100)
             grid_x2 = int((coordinate_pair2[0] - min_xcor) * 100) + self.matrix_border_offset
-            grid_y2 = int((coordinate_pair2[1] - min_ycor) * 100) + self.matrix_border_offset
+            grid_y2 = y_range + self.matrix_border_offset - int((coordinate_pair2[1] - min_ycor) * 100)
 
             draw.draw_line(grid, grid_x1, grid_y1, grid_x2, grid_y2)
+
         draw.flood_fill(grid, 0, 0, 2, 0)
         first_interior_coordinate_match = re.search(' ', create_image(grid))
         while first_interior_coordinate_match is not None:
@@ -97,7 +98,7 @@ class GeoJsonGridCreater(object):
                             first_interior_coordinate_match.start() % num_of_elems_in_row,
                             first_interior_coordinate_match.start() / num_of_elems_in_row, 1, 0)
             first_interior_coordinate_match = re.search(' ', create_image(grid))
-        # draw.flood_fill(grid, 0, 0, 0, 2)
+            # draw.flood_fill(grid, 0, 0, 0, 2)
         return grid
 
     def get_nth_polygon_grid_coordinates(self, num):
@@ -109,7 +110,7 @@ class GeoJsonGridCreater(object):
         for x in xrange(x_range + 2 * self.matrix_border_offset):
             for y in xrange(y_range + 2 * self.matrix_border_offset):
                 if grid.get(x, y) == 1:
-                    grid_coordinates.append(((x / 100.0) + min_xcor, (y / 100.0) + min_ycor))
+                    grid_coordinates.append(((x - self.matrix_border_offset) / 100.0 + min_xcor, (y_range + self.matrix_border_offset - y) / 100.0 + min_ycor))
         return grid_coordinates
 
     def get_district_grid(self):
@@ -120,14 +121,14 @@ class GeoJsonGridCreater(object):
         self.print_if_debug('Building district screen...')
         for coordinate in district_grid_coordinates:
             xcor = int((coordinate[0] - min_xcor) * 100) + self.matrix_border_offset
-            ycor = int((coordinate[1] - min_ycor) * 100) + self.matrix_border_offset
+            ycor = y_range + self.matrix_border_offset - int((coordinate[1] - min_ycor) * 100)
             grid.plot(xcor, ycor)
         return grid
 
     def get_district_grid_coordinates(self):
         district_grid_coordinates = []
         for i in xrange(self.total_polygons):
-            self.print_if_debug('Processing polygon {}/{}'.format(i, self.total_polygons))
+            self.print_if_debug('Processing polygon {}/{}'.format(i + 1, self.total_polygons))
             polygon_grid_coordinates = self.get_nth_polygon_grid_coordinates(i)
             district_grid_coordinates.extend(polygon_grid_coordinates)
         return district_grid_coordinates

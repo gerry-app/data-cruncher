@@ -29,7 +29,7 @@ class GeoJsonPreProcessor(object):
     def save(self):
         assert self.coordinates_string is not None, 'Data has not been preprocessed!'
         file_parent_directory = os.path.dirname(self.filename)
-        with open(os.path.join('preprocessed.txt'), 'w') as outstream:
+        with open(os.path.join(file_parent_directory, 'preprocessed.txt'), 'w') as outstream:
             outstream.write(self.coordinates_string)
         return True
 

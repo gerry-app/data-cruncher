@@ -3,7 +3,7 @@ def flood_fill(screen, start_xcor, start_ycor, new_value, empty_value):
     coordinates_to_fill.add((start_xcor, start_ycor))
     while coordinates_to_fill:
         xcor, ycor = coordinates_to_fill.pop()
-        if screen.contains(xcor, ycor) and screen.get(xcor, ycor) != empty_value:
+        if not screen.contains(xcor, ycor) or (screen.contains(xcor, ycor) and screen.get(xcor, ycor) != empty_value):
             continue
         screen.plot(xcor, ycor, new_value=new_value)
         coordinates_to_fill.add((xcor - 1, ycor))
