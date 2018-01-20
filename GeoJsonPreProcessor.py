@@ -32,3 +32,7 @@ class GeoJsonPreProcessor(object):
         with open(os.path.join('preprocessed.txt'), 'w') as outstream:
             outstream.write(self.coordinates_string)
         return True
+
+    def run(self):
+        self.preprocess()
+        self.save()
