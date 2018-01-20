@@ -19,6 +19,9 @@ class Screen(object):
     def create_screen(self, x_length, y_length):
         return [[0 for x in xrange(x_length)] for y in xrange(y_length)]
 
+    def copy_array(self):
+        return [row[:] for row in self.screen]
+
     def plot(self, xcor, ycor, new_value=1):
         self.screen[ycor][xcor] = new_value
 
