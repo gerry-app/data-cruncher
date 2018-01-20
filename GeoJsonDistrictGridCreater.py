@@ -48,7 +48,10 @@ class GeoJsonDistrictGridCreater(object):
             print message
 
     def process_coordinates_pair(self, pair_string):
-        return map(lambda x: float(x[:x.find('.') + 2]), pair_string.split(','))
+        try:
+            return map(lambda x: float(x[:x.find('.') + 2]), pair_string.split(','))
+        except Exception:
+            return [0, 0]
 
     def get_screen_info(self, coordinates_list):
         xcor_temp_list = [pair[0] for pair in coordinates_list]
