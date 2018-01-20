@@ -2,7 +2,7 @@ import os
 
 class CommandMaster(object):
 
-    def __init(self, command_runner, parent_dir='.'):
+    def __init__(self, command_runner, parent_dir='.'):
         self.all_files = self.get_all_files(parent_dir)
         self.command_runner = command_runner
 
