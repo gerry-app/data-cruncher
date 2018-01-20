@@ -8,7 +8,7 @@ class CommandMaster(object):
 
     def get_all_files(self):
         root, folders, files = os.walk(self.parent_dir)
-        all_files = [os.path.join(root, _file) for _file in files]
+        all_files = [os.path.join(root, _file) for _file in files if _file == 'shape.geojson']
         return all_files
 
     def run(self):
@@ -18,7 +18,7 @@ class CommandMaster(object):
 
 def main():
     import CommandRunner
-    command_master = CommandMaster(CommandRunner.command_runner)
+    command_master = CommandMaster(CommandRunner.command_runner, parent_dir='./districts/cds/2016/')
     command_master.run()
 
 if __name__ == '__main__':
